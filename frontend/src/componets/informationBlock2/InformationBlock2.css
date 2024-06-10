@@ -1,0 +1,33 @@
+.info-section {
+  padding: 50px;
+  background: #001529;
+  color: #ffffff;
+  text-align: left;
+}
+
+.info-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.text-section {
+  flex: 2;
+  padding-right: 20px;
+  line-height: 1.8;
+}
+
+.text-section h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.text-section p {
+  font-size: 1.1em;
+  margin-bottom: 20px;
+}
+
+.map-section {
+  flex: 1;
+}
