@@ -4,7 +4,7 @@ import './Footer.css';
 
 const { Footer } = Layout;
 
-const AppFooter: React.FC = () => {
+export const AppFooter: React.FC = () => {
   return (
     <Footer className="app-footer">
       <div className="footer-line"></div>
@@ -34,5 +34,3 @@ const AppFooter: React.FC = () => {
     </Footer>
   );
 };
-
-export default AppFooter;

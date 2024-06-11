@@ -1,19 +1,21 @@
-import React from 'react';
-import { YMaps, Map, Placemark } from 'react-yandex-maps';
-import './InformationBlock2.css';
+import React from "react";
+import { YMaps, Map, Placemark } from "react-yandex-maps";
+import "./InformationBlock2.css";
 
-const InformationBlock2: React.FC = () => {
+export const InformationBlock2: React.FC = () => {
   return (
     <div className="info-section">
       <div className="info-content">
         <div className="text-section">
           <h1>Наше местоположение</h1>
           <p>
-            Наш ресторан расположен в самом центре города, что делает его удобным для посещения в любое время.
-            Вы можете нас найти по адресу: улица Примерная, дом 1. Мы всегда рады видеть вас!
+            Наш ресторан расположен в самом центре города, что делает его
+            удобным для посещения в любое время. Вы можете нас найти по адресу:
+            улица Примерная, дом 1. Мы всегда рады видеть вас!
           </p>
           <p>
-            Забронировать столик и уточнить детали вы можете по телефону: +7 (985) 999-99-99.
+            Забронировать столик и уточнить детали вы можете по телефону: +7
+            (985) 999-99-99.
           </p>
         </div>
         <div className="map-section">
@@ -31,5 +33,3 @@ const InformationBlock2: React.FC = () => {
     </div>
   );
 };
-
-export default InformationBlock2;
