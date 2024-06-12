@@ -1,0 +1,32 @@
+/* src/AdminPage.css */
+
+.admin-page {
+  background-color: #001529;
+  color: #fff;
+  padding: 50px;
+  min-height: 70vh;
+}
+
+.admin-page .ant-typography {
+  color: #fff;
+}
+
+.admin-page .ant-table-thead > tr > th {
+  background-color: #112d44;
+  color: #fff;
+}
+
+.admin-page .ant-table-tbody > tr > td {
+  background-color: #112d44;
+  color: #fff;
+}
+
+.admin-page .ant-table-tbody > tr.ant-table-row:hover > td {
+  background-color: #1890ff;
+  color: #fff;
+}
+
+.admin-page .ant-table-tbody > tr.ant-table-row-selected > td {
+  background-color: #001529;
+  color: #fff;
+}
