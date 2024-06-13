@@ -5,7 +5,7 @@ export const DateTimePicker: React.FC = () => {
 
   return (
     <Form.Item
-      name="datetime"
+      name="Datetime"
       label="Дата и время"
       rules={[
         { required: true, message: "Пожалуйста, выберите дату и время!" },

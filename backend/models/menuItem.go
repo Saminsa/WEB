@@ -11,8 +11,8 @@ type MenuItem struct {
 	Category    string `gorm:"size:100;not null"`
 	Name        string `gorm:"size:100;not null"`
 	Price       int    `gorm:"not null"`
-	Description string
-	ImageURL    string
+	Description *string
+	ImageURL    *string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt `gorm:"index"`

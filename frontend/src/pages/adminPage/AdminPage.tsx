@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/AdminPage.tsx
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   Calendar,
   Table,
@@ -14,30 +15,27 @@ import {
 } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import isToday from "dayjs/plugin/isToday";
-import { bookings as initialBookings } from "../../mockData/bookingsData";
 import "./AdminPage.css";
+import { BookingItem, deleteBooking, fetchBookings, updateBookingStatus } from "../../api/api";
 
 dayjs.extend(isToday);
 
 const { Title, Text } = Typography;
 
-interface Booking {
-  id: number;
-  name: string;
-  phone: string;
-  datetime: string;
-  status: string;
-}
-
 export const AdminPage: React.FC = () => {
+  // const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
-  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
+  const [filteredBookings, setFilteredBookings] = useState<BookingItem[]>([]);
   const [todayBookingsCount, setTodayBookingsCount] = useState(0);
-  const [bookings, setBookings] = useState(initialBookings);
+
+  const { data: bookings = [], refetch } = useQuery({
+   queryKey: ['bookings'],
+   queryFn: fetchBookings
+  });
 
   useEffect(() => {
-    const filtered = bookings.filter((booking) =>
-      dayjs(booking.datetime).isSame(selectedDate, "day")
+    const filtered = bookings?.filter((booking) =>
+      dayjs(booking.Datetime).isSame(selectedDate, "day")
     );
     setFilteredBookings(filtered);
   }, [selectedDate, bookings]);
@@ -51,21 +49,31 @@ export const AdminPage: React.FC = () => {
     setSelectedDate(date);
   };
 
+  const { mutate: mutateStatus } = useMutation({
+    mutationFn: updateBookingStatus,
+    onSuccess: () => {
+      message.success("Статус брони обновлен!");
+      refetch();
+    },
+  });
+
   const handleBookingStatusChange = (id: number, status: string) => {
-    setBookings((prev) =>
-      prev.map((booking) =>
-        booking.id === id ? { ...booking, status } : booking
-      )
-    );
-    message.success("Статус брони обновлен!");
+    mutateStatus({ id, status });
   };
+
+  const { mutate: mutateDelete } = useMutation({
+    mutationFn: deleteBooking,
+    onSuccess: () => {
+      message.success("Бронь удалена!");
+      refetch();
+    },
+  });
 
   const handleDeleteBooking = (id: number) => {
     Modal.confirm({
       title: "Вы уверены, что хотите удалить эту бронь?",
       onOk: () => {
-        setBookings((prev) => prev.filter((booking) => booking.id !== id));
-        message.success("Бронь удалена!");
+        mutateDelete(id);
       },
     });
   };
@@ -73,22 +81,22 @@ export const AdminPage: React.FC = () => {
   const columns = [
     {
       title: "Имя",
-      dataIndex: "name",
+      dataIndex: "Name",
       key: "name",
     },
     {
       title: "Телефон",
-      dataIndex: "phone",
+      dataIndex: "Phone",
       key: "phone",
     },
     {
       title: "Дата и время",
-      dataIndex: "datetime",
+      dataIndex: "Datetime",
       key: "datetime",
     },
     {
       title: "Статус",
-      dataIndex: "status",
+      dataIndex: "Status",
       key: "status",
       render: (status: string) => (
         <Text
@@ -108,32 +116,32 @@ export const AdminPage: React.FC = () => {
     {
       title: "Действия",
       key: "actions",
-      render: (_: any, record: Booking) => (
+      render: (_: any, record: BookingItem) => (
         <span>
           <Button
-            type="link"
-            onClick={() => handleBookingStatusChange(record.id, "Состоялась")}
+            type="text"
+            onClick={() => handleBookingStatusChange(record.ID, "Состоялась")}
             style={{
-              color: "#fff",
+              color: "#00FF00",
             }}
           >
             Гость пришел
           </Button>
           <Button
-            type="link"
+            type="text"
             onClick={() =>
-              handleBookingStatusChange(record.id, "Не состоялась")
+              handleBookingStatusChange(record.ID, "Не состоялась")
             }
             style={{
-              color: "#fff",
+              color: "#FFA500",
             }}
           >
             Гость не пришел
           </Button>
           <Button
-            type="link"
+            type="text"
             danger
-            onClick={() => handleDeleteBooking(record.id)}
+            onClick={() => handleDeleteBooking(record.ID)}
           >
             Удалить
           </Button>
@@ -157,7 +165,7 @@ export const AdminPage: React.FC = () => {
             pagination={false}
             columns={columns}
             dataSource={filteredBookings}
-            rowKey="id"
+            rowKey="ID"
           />
         </Col>
       </Row>

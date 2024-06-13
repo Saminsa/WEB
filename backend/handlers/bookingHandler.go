@@ -4,6 +4,7 @@ import (
 	"backend/database"
 	"backend/models"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -56,6 +57,15 @@ func UpdateBooking(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var input struct {
+		Status string `json:"status"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	var booking models.Booking
 	result := database.DB.First(&booking, id)
 	if result.Error != nil {
@@ -63,11 +73,9 @@ func UpdateBooking(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&booking); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	log.Printf("input: %v", input)
 
+	booking.Status = input.Status
 	database.DB.Save(&booking)
 	json.NewEncoder(w).Encode(booking)
 }

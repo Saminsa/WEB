@@ -1,15 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Form, Input, Button, Modal } from "antd";
 import { DateTimePicker } from "../../componets/dateTimePicker/DateTimePicker";
+import { BookingItem, createBooking } from "../../api/api";
 import "./BookingPage.css";
 
 export const BookingPage: React.FC = () => {
-  const [form] = Form.useForm();
-  // const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm<BookingItem>();
   const [modal, contextHolder] = Modal.useModal();
 
-  const countDown = () => {
+  const createBookingMutation = useMutation<BookingItem, Error, BookingItem>({
+    mutationFn: createBooking,
+    onSuccess: () => {
+      countDownSuccess();
+    },
+    onError: () => {
+      countDownError();
+    },
+  });
+
+  const countDownSuccess = () => {
     let secondsToGo = 5;
 
     const instance = modal.success({
@@ -27,13 +38,33 @@ export const BookingPage: React.FC = () => {
     }, secondsToGo * 1000);
   };
 
-  const onFinish = (values: any) => {
+  const countDownError = () => {
+    let secondsToGo = 5;
+
+    const instance = modal.error({
+      title: "Ошибка!",
+      content: `Ошибка при создании бронирования!`,
+    });
+
+    const timer = setInterval(() => {
+      secondsToGo -= 1;
+    }, 1000);
+
+    setTimeout(() => {
+      clearInterval(timer);
+      instance.destroy();
+    }, secondsToGo * 1000);
+  };
+
+  const onFinish = (values: BookingItem) => {
     console.log("Success:", values);
-    countDown()
+    values.Status = "Запланирована";
+    createBookingMutation.mutate(values);
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
+    countDownError();
   };
 
   return (
@@ -48,7 +79,7 @@ export const BookingPage: React.FC = () => {
       >
         <Form.Item
           label="Номер телефона"
-          name="phone"
+          name="Phone"
           rules={[
             { required: true, message: "Пожалуйста, введите номер телефона!" },
             {
@@ -61,7 +92,7 @@ export const BookingPage: React.FC = () => {
         </Form.Item>
         <Form.Item
           label="Имя"
-          name="name"
+          name="Name"
           rules={[{ required: true, message: "Пожалуйста, введите имя!" }]}
         >
           <Input />
